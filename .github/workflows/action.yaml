@@ -19,4 +19,7 @@ jobs:
           elif [[ "$PR_TITLE" == *"[execute=false]"* ]]; then
             echo "PR title contains [execute=false]. Failing workflow..."
             exit 1
+          else
+            echo "PR title does not contain [execute=true] or [execute=false]. Default action..."
+            # Default action when neither [execute=true] nor [execute=false] is found in the title
           fi
