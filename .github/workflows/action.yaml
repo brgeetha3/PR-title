@@ -10,13 +10,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
-      - name: Fail if PR title is empty
+      - name: Check PR title
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
-          if [[ -z "$PR_TITLE" ]]; then
-            echo "PR title is empty. Failing workflow..."
+          if [[ "$PR_TITLE" == *"[execute=true]"* ]]; then
+            echo "PR title contains [execute=true]. Continue with workflow..."
+            # Continue with your workflow steps here
+          elif [[ "$PR_TITLE" == *"[execute=false]"* ]]; then
+            echo "PR title contains [execute=false]. Failing workflow..."
             exit 1
           else
-            echo "PR title is not empty. Continue with workflow..."
-            # Continue with your workflow steps here
+            echo "PR title does not contain [execute=true] or [execute=false]. Default action..."
+            # Default action when neither [execute=true] nor [execute=false] is found in the title
           fi
