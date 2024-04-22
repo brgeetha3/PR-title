@@ -10,16 +10,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
-      - name: Check PR title
+      - name: Check PR title for execution
+        if: contains(github.event.pull_request.title, 'execute=true')
         run: |
-          PR_TITLE="${{ github.event.pull_request.title }}"
-          if [[ "$PR_TITLE" == *"[execute=true]"* ]]; then
-            echo "PR title contains [execute=true]. Continue with workflow..."
-            # Continue with your workflow steps here
-          elif [[ "$PR_TITLE" == *"[execute=false]"* ]]; then
-            echo "PR title contains [execute=false]. Failing workflow..."
-            exit 1
-          else
-            echo "PR title does not contain [execute=true] or [execute=false]. Default action..."
-            # Default action when neither [execute=true] nor [execute=false] is found in the title
-          fi
+          # Your workflow steps here
+          echo "The PR title contains 'execute=true'. Triggering actions..."
+ 
+      - name: Fail if PR title contains 'execute=false'
+        if: contains(github.event.pull_request.title, 'execute=false')
+        run: |
+          echo "The PR title contains 'execute=false'. Failing workflow..."
+          exit 1
+ 
+      - name: Fail if PR title does not contain 'execute=true' or 'execute=false'
+        if: "!contains(github.event.pull_request.title, 'execute=true') && !contains(github.event.pull_request.title, 'execute=false')"
+        run: |
+          echo "The PR title doesn't contain 'execute=true' or 'execute=false'. Failing workflow..."
+          exit 1
+          
