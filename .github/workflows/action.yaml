@@ -1,1 +1,22 @@
+name: "PR Title Check"
+on:
+  pull_request:
+    types: [closed]
 
+jobs:
+  title-check:
+    name: excute-test-cases
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - name: Fail if PR title is empty
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          if [[ -z "$PR_TITLE" ]]; then
+            echo "PR title is empty. Failing workflow..."
+            exit 1
+          else
+            echo "PR title is not empty. Continue with workflow..."
+            # Continue with your workflow steps here
+          fi
